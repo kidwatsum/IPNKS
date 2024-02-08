@@ -1,0 +1,39 @@
+body{
+    font-family: Arial,sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    align-content: center;
+}
+h1{
+    margin-bottom: 32px;
+}
+input{
+    display: block;
+    margin-bottom: 24px;
+}
+/*
+.green{
+    width: 220px;
+    display: inline-block;
+    padding: 42px;
+    margin:18px;
+}
+.red{
+    width: 220px;
+    display: inline-block;
+    padding: 42px;
+    margin:18px;
+}*/
+.green{
+    background-color: limegreen;
+}
+.red{
+    background-color: red;
+}
+.results{
+    display: inline-block;
+    width: 220px;
+    padding: 42px;
+    margin: 18px;
+}
