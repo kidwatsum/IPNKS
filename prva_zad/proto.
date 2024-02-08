@@ -1,0 +1,125 @@
+let people='[{"name":"Nikola","surname":"Nikolovski","id":"NNN1asdfgh","sales":"1000"},{"name":"Nikolina","surname":"Nikolovska","id":"NNN2asdfgh","sales":"3000"}]';
+//the main form event listener
+let obj=JSON.parse(people);
+let myForm=document.querySelector(".system");
+myForm.addEventListener("submit",e => {
+    e.preventDefault();
+
+    // //the data needed from the input
+    // let name=myForm.name.value;
+    // let surname=myForm.surname.value;
+    // let id=myForm.id.value;
+    let income=myForm.flow.value;
+
+    //getting datta into a JSON
+    let formData=new FormData(myForm);
+    let jsonData={};
+    formData.forEach((value,key)=>{
+        jsonData[key]=value;
+    });
+    let box_color=(parseInt(jsonData.income)<=5000) ? "green": "red";
+
+    //template for results
+    const template=`<div id="${jsonData.id}" class="${box_color}">
+                     <p>Сметка број:${generate()}</p><br>
+                     <p>Име:${jsonData.name}</p><br>
+                     <p>Презиме:${jsonData.surname}</p><br>
+                     <p>ID:${jsonData.id}</p><br>
+                     <p>Промет:${jsonData.income}</p><br>
+                     <button onclick="pay(this)">Плати</button>   
+                </div>`;
+
+    //main function
+    if(idCheck(jsonData.id)){
+        if(checkExistingID(jsonData)){
+            let newValue=updateIncome(jsonData);
+            let update=document.querySelector(`#${jsonData.id}`);
+            update.querySelector('p:nth-child(9)').textContent=`Промет:${newValue}`;
+        }else{
+            /*generateColor(jsonData.income,template);*/
+            document.querySelector(".results").insertAdjacentHTML("beforeend", template);
+            obj.push(jsonData);
+        }
+            console.log(checkExistingID(jsonData));
+
+    }else {
+        alert("Your id need to have 10 characters,at least 3 uppercase and at least 1 number")
+    }
+
+});
+
+
+//function for id check
+const idCheck=data=>{
+    let count=data.length;
+    let upper_count=data.match(/[A-Z]/g);
+    let num_count=data.match(/\d/g);
+
+    if(count===10 && upper_count.length>=3 && num_count.length>=1) return true;
+}
+
+//function for number generation
+const generate=()=>{
+    let random=Math.floor(Math.random()*90000)+10000;
+    return random;
+}
+
+//block template
+let myGreen=document.querySelector(".green");
+let myRed=document.querySelector(".red");
+
+//coloring function
+const generateColor=(data,temp)=>{
+    if(data<5000){
+        myGreen.insertAdjacentHTML("beforeend", temp);
+        myGreen.style.backgroundColor="green";
+    }else{
+        myRed.insertAdjacentHTML("beforeend", temp);
+        myRed.style.backgroundColor="red";
+    }
+}
+
+//CHECKING IF A ID EXISTS IN THE JSON
+const checkExistingID=(element)=> {
+    for (let i = 0; i < obj.length; i++) {
+        if(obj[i].id===element.id){
+            console.log(obj[i].id);
+            console.log(element.id);
+            return true;
+        }
+    }
+    return false;
+}
+
+//UPDATING AMOUNT OF INCOME
+const updateIncome=data=>{
+    for(let i=0;i<obj.length;i++){
+        if(obj[i].id===data.id){
+            obj[i].income=parseInt(data.income)+parseInt(obj[i].income);
+            return obj[i].income;
+        }
+    }
+}
+
+//PAYING METHOD
+const pay=button=>{
+    let current=button.parentElement;
+    let opacity=1;
+
+    const updateInterval=()=>{
+        if(opacity<=0){
+            console.log(current);
+            let clone=current.cloneNode(true);
+
+            clone.style.opacity="1";
+            clone.querySelector("button").disabled=true;
+            clone.querySelector(".payed").appendChild(clone);
+
+            current.remove();
+            clearInterval(fadeAway);
+        }
+        current.style.opacity=opacity;
+        opacity-=0.1;
+    }
+    const fadeAway=setInterval(updateInterval,50);
+}
